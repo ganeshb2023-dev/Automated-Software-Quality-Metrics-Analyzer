@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automated Software Quality Metrics Analyzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">AQ</span>
+      <div class="brand-text">
+        <strong>ASQMA</strong>
+        <span>Quality Metrics Analyzer</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="overview">Overview</button>
+      <button class="nav-item" data-view="metrics">File Metrics</button>
+      <button class="nav-item" data-view="classes">OO Design</button>
+      <button class="nav-item" data-view="duplication">Duplication</button>
+      <button class="nav-item" data-view="sonarqube">SonarQube</button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <span>10 metrics · 8 standard + 2 custom</span>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 id="project-title">No project analyzed yet</h1>
+        <span id="project-sub" class="muted">Upload source files or try the sample project to begin</span>
+      </div>
+      <div class="topbar-right">
+        <div id="gate-badge" class="gate-badge gate-pending">
+          <span class="dot"></span>
+          <span id="gate-badge-text">Awaiting analysis</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="upload-bar" id="upload-bar">
+      <div class="upload-box" id="dropzone">
+        <div class="upload-copy">
+          <strong>Drop a .zip of a Python project</strong>
+          <span class="muted">or choose files below. We never store your code after analysis finishes.</span>
+        </div>
+        <div class="upload-controls">
+          <label class="file-btn">
+            Choose .zip
+            <input type="file" id="zip-input" accept=".zip" hidden>
+          </label>
+          <label class="file-btn secondary">
+            Choose .py files
+            <input type="file" id="files-input" accept=".py" multiple hidden>
+          </label>
+          <button id="run-sample" class="file-btn ghost">Try sample project</button>
+        </div>
+      </div>
+      <div id="upload-status" class="upload-status"></div>
+    </section>
+
+    <!-- OVERVIEW VIEW -->
+    <section class="view" id="view-overview">
+      <div class="tiles" id="tiles"></div>
+
+      <div class="panel-row">
+        <div class="panel">
+          <h2>Complexity by file</h2>
+          <canvas id="chart-complexity" height="220"></canvas>
+        </div>
+        <div class="panel">
+          <h2>Quality gate outcome</h2>
+          <canvas id="chart-gate" height="220"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Custom metrics — built for this project</h2>
+        </div>
+        <div class="custom-grid" id="custom-grid"></div>
+      </div>
+    </section>
+
+    <!-- FILE METRICS VIEW -->
+    <section class="view hidden" id="view-metrics">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Per-file metric breakdown</h2>
+          <div class="panel-actions">
+            <button id="export-json" class="file-btn ghost small">Export JSON</button>
+            <button id="export-csv" class="file-btn ghost small">Export CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="file-table">
+            <thead>
+              <tr>
+                <th>File</th><th>LOC</th><th>Avg CC</th><th>Max CC</th>
+                <th>Halstead Vol.</th><th>MI</th><th>Dup %</th><th>Gate</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLASSES VIEW -->
+    <section class="view hidden" id="view-classes">
+      <div class="panel">
+        <h2>Object-oriented design metrics (CBO · DIT · LCOM)</h2>
+        <div class="table-wrap">
+          <table id="class-table">
+            <thead>
+              <tr><th>Class</th><th>File</th><th>Methods</th><th>CBO</th><th>DIT</th><th>LCOM</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- DUPLICATION VIEW -->
+    <section class="view hidden" id="view-duplication">
+      <div class="panel">
+        <h2>Duplicated code blocks</h2>
+        <p class="muted">Detected using a 4-line sliding-window hash across all submitted files.</p>
+        <div class="table-wrap">
+          <table id="dup-table">
+            <thead><tr><th>File</th><th>Duplicated lines</th><th>Countable lines</th><th>Duplication %</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SONARQUBE VIEW -->
+    <section class="view hidden" id="view-sonarqube">
+      <div class="panel">
+        <h2>SonarQube integration</h2>
+        <p class="muted">Connect a running SonarQube / SonarCloud server to pull industry-benchmarked values for the eight standard metrics alongside this engine's own computation. Start a local server with <code>docker-compose up</code> (see README).</p>
+
+        <div class="sonar-form">
+          <label>Server URL
+            <input type="text" id="sonar-url" placeholder="http://localhost:9000">
+          </label>
+          <label>User token
+            <input type="password" id="sonar-token" placeholder="squ_...">
+          </label>
+          <label>Project key
+            <input type="text" id="sonar-project" placeholder="asqma-sample">
+          </label>
+          <div class="sonar-actions">
+            <button id="sonar-test" class="file-btn secondary">Test connection</button>
+            <button id="sonar-fetch" class="file-btn">Fetch &amp; merge measures</button>
+          </div>
+        </div>
+
+        <div id="sonar-status" class="upload-status"></div>
+
+        <div class="table-wrap">
+          <table id="sonar-table">
+            <thead><tr><th>SonarQube metric</th><th>Value</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

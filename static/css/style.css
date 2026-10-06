@@ -1,0 +1,343 @@
+/* ---- tokens ---- */
+:root {
+  --ink:        #0D1118;
+  --panel:      #161C26;
+  --panel-2:    #1C2330;
+  --border:     #2A3240;
+  --text:       #E7EAEE;
+  --muted:      #8A93A3;
+  --accent:     #5B9BD9;
+  --accent-dim: #2F5A82;
+  --pass:       #3FBF8F;
+  --warn:       #E8A33D;
+  --fail:       #E2574C;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+}
+
+.muted { color: var(--muted); }
+
+code {
+  font-family: var(--mono);
+  background: #000a;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* ---- shell layout ---- */
+.shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: #0A0D13;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 18px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+
+.brand-mark {
+  font-family: var(--mono);
+  font-weight: 600;
+  background: var(--accent-dim);
+  color: #CFE4F7;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.brand-text { display: flex; flex-direction: column; line-height: 1.3; }
+.brand-text strong { font-size: 15px; }
+.brand-text span { font-size: 11.5px; color: var(--muted); }
+
+.nav { display: flex; flex-direction: column; gap: 2px; }
+
+.nav-item {
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease;
+}
+.nav-item:hover { background: #151B25; color: var(--text); }
+.nav-item.active { background: var(--panel-2); color: var(--text); font-weight: 500; }
+
+.sidebar-foot {
+  margin-top: auto;
+  font-size: 11.5px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.main { padding: 28px 36px 60px; max-width: 1180px; }
+
+/* ---- topbar ---- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.topbar h1 {
+  font-size: 22px;
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.gate-badge {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.gate-badge .dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--muted);
+}
+.gate-pending .dot { background: var(--muted); }
+.gate-pass .dot { background: var(--pass); box-shadow: 0 0 8px var(--pass); }
+.gate-fail .dot { background: var(--fail); box-shadow: 0 0 8px var(--fail); }
+.gate-pass { border-color: #2A5444; }
+.gate-fail { border-color: #5A2E2B; }
+
+/* ---- upload bar ---- */
+.upload-bar { margin-bottom: 28px; }
+
+.upload-box {
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  transition: border-color .15s ease, background .15s ease;
+}
+.upload-box.drag-over { border-color: var(--accent); background: #16202C; }
+
+.upload-copy { display: flex; flex-direction: column; gap: 3px; }
+.upload-copy strong { font-size: 14.5px; }
+.upload-copy span { font-size: 12.5px; }
+
+.upload-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.file-btn {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  background: var(--accent);
+  color: #0A1420;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 7px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.file-btn.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); }
+.file-btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent-dim); }
+.file-btn.small { padding: 6px 12px; font-size: 12.5px; }
+
+.upload-status {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--muted);
+  min-height: 16px;
+}
+.upload-status.err { color: var(--fail); }
+.upload-status.ok { color: var(--pass); }
+
+/* ---- tiles ---- */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.tile {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 16px 14px;
+}
+.tile .tile-label {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  display: block;
+}
+.tile .tile-value {
+  font-family: var(--mono);
+  font-size: 23px;
+  font-weight: 600;
+}
+.tile .tile-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  display: block;
+}
+.tile.pass .tile-value { color: var(--pass); }
+.tile.warn .tile-value { color: var(--warn); }
+.tile.fail .tile-value { color: var(--fail); }
+
+/* ---- panels ---- */
+.panel-row {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+.panel h2 {
+  font-size: 15px;
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.panel-head h2 { margin: 0; }
+.panel-actions { display: flex; gap: 8px; }
+
+.custom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.custom-card {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.custom-card .label { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.custom-card .value { font-family: var(--mono); font-size: 26px; color: var(--accent); }
+.custom-card .desc { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+/* ---- tables ---- */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  text-align: left;
+  font-size: 11.5px;
+  text-transform: none;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 10px;
+  font-weight: 500;
+}
+tbody td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #1D2430;
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+tbody td:first-child { font-family: var(--sans); font-size: 13px; }
+tbody tr:hover { background: #161C26; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-family: var(--sans);
+  font-weight: 500;
+}
+.badge.pass { background: #163327; color: var(--pass); }
+.badge.fail { background: #33201E; color: var(--fail); }
+
+/* ---- sonarqube form ---- */
+.sonar-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin: 16px 0;
+  align-items: end;
+}
+.sonar-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.sonar-form input {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 9px 11px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.sonar-actions { display: flex; gap: 10px; grid-column: span 3; }
+
+/* ---- view toggling ---- */
+.hidden { display: none; }
+
+/* ---- responsive ---- */
+@media (max-width: 920px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { flex-direction: row; align-items: center; padding: 14px 18px; }
+  .nav { flex-direction: row; flex-wrap: wrap; }
+  .sidebar-foot { display: none; }
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .panel-row { grid-template-columns: 1fr; }
+  .custom-grid { grid-template-columns: 1fr; }
+  .sonar-form { grid-template-columns: 1fr; }
+  .sonar-actions { grid-column: 1; }
+}
